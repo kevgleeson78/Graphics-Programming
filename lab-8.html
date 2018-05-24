@@ -1,0 +1,91 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <meta charset="UTF-8"> 
+        <title>
+        </title> 
+        <script src="http://mrdoob.github.com/three.js/build/three.min.js"></script>
+        <style type="text/css"> 
+        </style> 
+    </head> 
+    <body> 
+        <script type="text/javascript"> 
+        // Initial color for changing the color
+        var color = 0x000000;
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        camera.position.z=100;
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftshadowMap;
+        document.body.appendChild( renderer.domElement );
+
+        var geometry = new THREE.SphereGeometry( 40, 60, 60 );
+        var material = new THREE.MeshLambertMaterial( {color: color, wireframe:false} );
+        var sphere = new THREE.Mesh( geometry, material );
+        sphere.receiveShadow = true;
+        sphere.castShadow = true;
+        scene.add( sphere );
+        var geometry = new THREE.SphereGeometry( 40, 60, 60 );
+        var material = new THREE.MeshLambertMaterial( {color: color, wireframe:true} );
+        var sphere1 = new THREE.Mesh( geometry, material );
+        sphere1.receiveShadow = true;
+        sphere1.castShadow = true;
+        // to add the wireframe adapted from https://stackoverflow.com/questions/31539130/display-wireframe-and-solid-color
+        sphere.add(sphere1);
+        var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5); 
+        directionalLight.position.set(0, 0, 2); 
+        scene.add(directionalLight);
+
+        
+
+        var geometry = new THREE.PlaneGeometry( 250, 150, 0 );
+        var material = new THREE.MeshLambertMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
+        var plane = new THREE.Mesh( geometry, material );
+        plane.receiveShadow = true;
+        plane.castShadow = true;
+        plane.rotateX = 10;
+        plane.rotateY = 30;
+        plane.position.z=-10;
+        scene.add( plane );
+
+        var spotLight = new THREE.SpotLight( 0xffffff );
+        spotLight.position.set( 30, 0, 90 );
+
+        spotLight.castShadow = true;
+        
+        scene.add( spotLight );
+        var helper = new THREE.CameraHelper(spotLight.shadow.camera);
+        scene.add(helper);
+            var dxPerFrame = .25;
+            var dzPerFrame = .25;
+            
+        var repeatMe = function (){
+            renderer.render(scene,camera); 
+            sphere.rotateX(Math.PI/180);
+            sphere.rotateY(Math.PI/180);
+            //adapted from https://stackoverflow.com/questions/19703615/i-want-to-change-the-cube-color-which-is-created-by-three-js
+            //condition to check is the current color value is les than the hex value
+            if(color<0xdddddd)
+            //Increment the colour value
+            color += 0x0000ff;
+            //set the new color
+            sphere.material.color.setHex(color);
+            // move ball
+            sphere.position.z += dzPerFrame;
+            sphere.position.x += dxPerFrame;
+            // if we're too far right, move towards the left
+            if(sphere.position.x >  100) dxPerFrame = -.25; 
+            // if we're too far left, move towards the rightt
+            if(sphere.position.x < -100) dxPerFrame =  .25;
+            if(sphere.position.z > 30) dzPerFrame = -.07;
+            if(sphere.position.z < 0) dzPerFrame = .05;
+            
+            requestAnimationFrame(repeatMe);
+        };
+        
+        repeatMe();
+        </script> 
+    </body> 
+</html>

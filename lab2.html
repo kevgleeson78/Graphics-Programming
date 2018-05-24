@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<hmtl>
+  <head>
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+<!--change cnavas border color to black-->	
+		<style type="text/css">
+		
+	canvas{	
+	border: 1px solid black;
+	}
+    </style>
+
+  </head>
+
+  <body>
+		<!-- Canvas one used as container for canvas-->
+    <canvas id="canvasOne" ></canvas>
+	<script type="text/javascript">
+		// Gets a handle to the element with id canvasOne.
+		var canvas = document.getElementById("canvasOne");
+		
+		// Set the canvas up for drawing in 2D.
+		var ctx = canvas.getContext("2d");	
+		//set canvas width and height
+		canvas.width  = 500;
+		canvas.height = 500;
+		var angle = 0;
+     	
+		/*
+		//draw function for ball
+		draw: function(){
+			//starting point
+			ctx.beginPath();
+			//draw circle with x,y,radius,satrt angle, end angle, and optional direction
+			ctx.arc(ball.xpos,ball.ypos,ball.r,0,2*Math.PI);
+			//color the ball
+			ctx.fillStyle = "rgba(250, 0, 0,.5)";
+			ctx.moveTo(ball.xpos,ball.ypos);
+			//render the color
+			ctx.fill();
+			// outline of ball
+			ctx.lineWidth = 2;
+			//outline colour
+			ctx.strokeStyle = "rgb(0,0,0)";
+			//stroke draws the outline
+			ctx.stroke();	
+		},
+		*/
+
+			
+		/*
+		// These commands are for part 1 of  lab 2
+		//creating resizing and moving three balls.
+		//console.log is used to display any variable to the terminal in developer mode in the browser
+		console.log(ball.xpos);
+		//ball.  used to access each method within th function	
+		ball.draw();
+		//move 130 x, 130 y from current location
+		ball.move(130,130);
+		//redraw the ball
+		ball.draw();
+		ball.move(260,260);
+		//resize the ball
+		ball.resize(120);
+		ball.draw();
+		ball.move(230,230);
+		ball.draw();
+		*/
+		
+		/*
+		
+		//object literal of ball
+		var ball = {
+		//initialise Variables
+		xpos: 80,
+		ypos: 80,
+		r: 60,
+	
+		//Move function takes in two ints as arguments and adds
+		//them to xpos and ypos. 
+		//used to move the balls position on the screen
+		move: function(addx,addy){
+			this.xpos = this.xpos + addx;
+			this.ypos = this.ypos + addy;
+		},
+	
+		//resize function takes in an int as an argument
+		//and assigns it to r. Used to resize the ball 
+		resize: function(setr){
+			this.r = setr;
+		},
+		//Draw function for pizza
+		draw: function(){
+		//for loop to draw each line of th pie.
+		// i is set to 7. set i to whatever amount of sections you need.	
+		for (var i = 0; i < 7; i++) {
+			//starting point
+			ctx.beginPath();
+			//move to positions the pen to the center of the ball
+			ctx.moveTo(ball.xpos, ball.ypos)
+			//circle craeted with x,y and r set. The final two  arguments (Starting and ending point)
+			//change over each itteration of the loop giving a new point on the circle to draw to.
+			ctx.arc(ball.xpos, ball.ypos, ball.r, i*(2 * Math.PI / 7), (i+1)*(2 * Math.PI / 7))
+			//set line width 	
+			ctx.lineWidth = 2
+			//set colour of the lines
+			ctx.strokeStyle = '#444';
+
+			//render the lines
+			ctx.stroke();
+			}
+			//the inner circle of the pizza
+			ctx.beginPath();
+			ctx.moveTo(ball.xpos, ball.ypos);
+
+			//ball.r is used - 10 pixles to put the smaller circle in the pizza.
+			ctx.arc(ball.xpos,ball.ypos,ball.r-10,0,2*Math.PI);
+			ctx.lineWidth = 2;
+			ctx.strokeStyle = '#444';
+			ctx.stroke(); 
+			},
+			//rotate function
+			rotate: function(){
+			//clear the canvas for step of rotation
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+			// Move registration point to the center of the canvas
+			ctx.translate(ball.xpos, ball.ypos);
+
+			// Rotate 1 degree
+			ctx.rotate(Math.PI / 180);
+
+			// Move registration point back to the top left corner of canvas
+			ctx.translate(-ball.xpos, -ball.ypos);
+			//draw the ball
+			ball.draw();
+			//restore canvas back to original state
+			ctx.restore();
+			 },
+		//contains function to see if x,y cordinates are inside a drawn circle
+		// the result is logged out to the terminal.
+		//x,y value taken in as arguments
+		contains: function(x, y){
+			//set both x annd y to the input values
+			this.x = this.x;
+			this.y = this.y;
+			//the below equation is used to get the position of the function input of x and y.
+			//x and y are subtracted from the ball's x and y
+			//they are the multiplied by each other and added together.
+			//the square root function is used in case the number is negative it will change it to a positive number 
+			//if it is. The final number is then checked if it is less than or equal to the number produced.
+			//it is inside or touching the circle.
+			if( Math.sqrt((x-ball.xpos)*(x-ball.xpos) + (y-ball.ypos)*(y-ball.ypos)) <= ball.r)
+				{
+				//return if condition is met
+				return console.log(true);
+			}else{
+				//return if condition is not met.
+					return console.log(false);
+				}
+			}	
+		};	
+		
+		//call draw function
+		ball.draw();
+		//call rotate function
+		ball.rotate();
+		//set interval of rotation
+		setInterval(ball.rotate,100);
+		//call the contains function.
+		//the console window needs to be open to see the result of this function Press f12.
+		ball.contains(100,80);
+		*/
+		//####################new ball #########################
+		//Ball object constructor
+		function Ball(xpos, ypos, r) {
+			//set r, xpos and ypos fromt he input of arguments
+		  this.xpos = xpos;
+		  this.ypos = ypos;
+		  this.r = r;
+		//Move function takes in two ints as arguments and adds
+		//them to xpos and ypos. 
+		//used to move the balls position on the screen
+		this.move = function(addx, addy) {
+			this.xpos = this.xpos + addx;
+			this.ypos = this.ypos + addy;
+		};
+		//resize function takes in an int as an argument
+		//and assigns it to r. Used to resize the ball 
+		this.resize = function(setr) {
+		    this.r = setr;
+		}
+
+		//Draw function for pizza
+		this.draw =  function(){
+			//for loop to draw each line of th pie.
+			// i is set to 7. set i to whatever amount of sections you need.	
+			for (var i = 0; i < 7; i++) {
+				//starting point
+				ctx.beginPath();
+				//move to positions the pen to the center of the ball
+				ctx.moveTo(this.xpos, this.ypos)
+				//circle craeted with x,y and r set. The final two  arguments (Starting and ending point)
+				//change over each itteration of the loop giving a new point on the circle to draw to.
+				ctx.arc(this.xpos, this.ypos, this.r, i*(2 * Math.PI / 7), (i+1)*(2 * Math.PI / 7))
+				//set line width 	
+				ctx.lineWidth = 2
+				//set colour of the lines
+				ctx.strokeStyle = '#444';
+	
+				//render the lines
+				ctx.stroke();
+				}
+				//the inner circle of the pizza
+				ctx.beginPath();
+				ctx.moveTo(this.xpos, this.ypos);
+	
+				//ball.r is used - 10 pixles to put the smaller circle in the pizza.
+				ctx.arc(this.xpos,this.ypos,this.r-10,0,2*Math.PI);
+				ctx.lineWidth = 2;
+				ctx.strokeStyle = '#444';
+				ctx.stroke(); 
+				}
+		this.rotate = function(){
+			//clear the canvas for step of rotation
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+			// Move registration point to the center of the canvas
+			ctx.translate(ball.xpos, ball.ypos);
+
+			// Rotate 1 degree
+			ctx.rotate(Math.PI / 180);
+
+			// Move registration point back to the top left corner of canvas
+			ctx.translate(-ball.xpos, -ball.ypos);
+			//draw the ball
+			ball.draw();
+			//restore canvas back to original state
+			ctx.restore();
+			 };
+		//contains function to see if x,y cordinates are inside a drawn circle
+		// the result is logged out to the terminal.
+		//x,y value taken in as arguments
+		this.contains = function(x, y){
+			//set both x annd y to the input values
+			this.x = this.x;
+			this.y = this.y;
+			//the below equation is used to get the position of the function input of x and y.
+			//x and y are subtracted from the ball's x and y
+			//they are the multiplied by each other and added together.
+			//the square root function is used in case the number is negative it will change it to a positive number 
+			//if it is. The final number is then checked if it is less than or equal to the number produced.
+			//it is inside or touching the circle.
+			if( Math.sqrt((x-this.xpos)*(x-this.xpos) + (y-this.ypos)*(y-this.ypos)) <= this.r)
+				{
+				//return if condition is met
+				return console.log(true);
+			}else{
+				//return if condition is not met.
+					return console.log(false);
+				}
+			};
+		//Intersect function takes a ball as a perameter
+		//ball will be the the object used to test if the two are touching.
+		this.intersect = function(ball) {
+			//the x and y cordinates of the first ball are subtracted from the test ball and stored
+			//in productX and productY
+		    var productX = this.xpos - ball.xpos;
+		    var productY = this.ypos - ball.ypos;
+			//pythagoras theorem is used to get the distance between both center points of each circle.
+		    var distance = Math.sqrt(productX * productX + productY * productY);
+			//A condition is used to check if the distance between both bencer point of each circle
+			//is less than or equal to the sum of both radii the circles are touching.
+			//the result is p[rinted out to the console
+		    if (distance <= (this.r + ball.r)) {
+		      return console.log(true);
+		    } else {
+		      return console.log(false);
+		    }
+		  };
+		}
+		var ball = new Ball(100, 100, 100);
+		ball.draw();
+		var ball1 = new Ball(100,150,80);
+		ball1.draw();
+		//intersect function
+		//press f12 to see the result.
+		ball1.intersect(ball);
+		//ball.rotate();
+		//setInterval(ball.rotate,100);
+		
+		 
+    </script>
+
+  </body>
+
+</html>

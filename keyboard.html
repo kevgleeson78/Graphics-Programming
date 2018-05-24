@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html>
+
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+  <head>
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+
+    <style type="text/css">
+		canvas {
+			border: 1px solid grey; 
+		}
+    </style>
+
+  </head>
+
+  <body>
+
+    <canvas id="canvas-for-ball"></canvas>
+
+    <script type="text/javascript">
+		// Gets a handle to the element with id canvasOne.
+		var canvas = document.getElementById("canvas-for-ball");
+		// Get a 2D context for the canvas.
+		var ctx = canvas.getContext("2d");
+		// Make the fill style red.
+		ctx.fillStyle = "rgb(255, 0, 0)";
+    // The vertical location of the ball.
+    
+      
+    //set canvas width and height
+    canvas.width = 500;
+	  canvas.height = 500;
+		
+		
+		//ball object
+		class Ball {
+			//constructor
+			constructor(x,y,r,xvel,yvel){
+				this.x =x;
+				this.y = y;
+				this.r =r;
+				this.xvel = xvel;
+				this.yvel = yvel;
+				//angle defining spin and sections of ball
+				this.theta = 0;
+				//for the sections of the ball
+				this.theta2 = 0;
+				//for he amount of sections needed
+				this.seventh = (Math.PI*2)/7
+				//to control the amount of spin the ball has
+				this.thetaInc = 0.0129;
+			}
+			draw(){
+				// Update the y location.
+				this.x += this.xvel;
+				this.y += this.yvel;
+				//draw circle
+				ctx.beginPath();
+				ctx.arc(this.x,this.y,this.r,0,Math.PI*2,false);
+				ctx.stroke();
+				//fill the circle
+				ctx.fillStyle = "orange";
+				ctx.fill();
+				//draw inner circle of ball
+				ctx.beginPath();
+				ctx.arc(this.x,this.y,this.r*.9,0,Math.PI*2,false);
+				ctx.stroke();
+				//spin control
+				this.theta += this.thetaInc;
+				//loop for adding sections to pie
+				for( var n = 0; n < 7; ++n) {  // add loop to draw radii
+					this.theta2 = this.theta + n * this.seventh;
+					ctx.moveTo( this.x, this.y);
+					ctx.lineTo( this.x + this.r*Math.cos(this.theta2), this.y + this.r*Math.sin(this.theta2));
+					}
+				ctx.lineWidth = "2";
+				ctx.lineCap = "round";
+				ctx.strokeStyle = "black";
+				ctx.stroke();			
+			}
+			move(){	
+				//condition to stop ball getting stuck in wall if the 
+				//radius is beond the wall boundry at y direction.
+				if(this.y >= canvas.height - this.r){
+					this.y = canvas.height - this.r;
+					this.yvel =-this.yvel;
+					}else if(this.y<=0+this.r){
+ 						this.y = this.r;
+ 						this.yvel = -this.yvel;
+					}
+					//to reverse the direction of the ball when hitting walls
+					if((this.xvel<0 && this.yvel >0) && this.thetaInc <0){
+						this.thetaInc = -1*this.thetaInc;
+					}
+					else if((this.xvel <0 && this.yvel>0) && this.thetaInc >0){
+						this.thetaInc = -1*this.thetaInc
+					}
+					else if((this.xvel >0 && this.yvel >0) && this.thetaInc >0){
+						this.thetaInc = -1 * this.thetaInc;
+					}
+					else if((this.xvel > 0 && this.yvel < 0)&& this.thetaInc <0){
+						this.thetaInc = -1 * this.thetaInc;
+					}
+					//condition to stop the ball getting stuck in the wall at x direction.
+					if(this.x>=canvas.width-this.r){
+						this.x = canvas.width - this.r;
+						this.xvel = -this.xvel;
+						}
+					else if(this.x<=this.r){
+						this.x = this.r;
+						this.xvel = -this.xvel;
+					}			
+			}
+			//Intersect function takes a ball as a perameter
+			//ball will be the the object used to test if the two are touching.
+			intersect(ball) {
+				//the x and y cordinates of the first ball are subtracted from the test ball and stored
+				//in productX and productY
+		    var productX = this.x - ball.x;
+		    var productY = this.y - ball.y;
+				//pythagoras theorem is used to get the distance between both center points of each circle.
+		    var distance = Math.sqrt(productX * productX + productY * productY);
+				//A condition is used to check if the distance between both bencer point of each circle
+				//is less than or equal to the sum of both radii the circles are touching.
+				//the result is p[rinted out to the console
+		    if (distance <= (this.r + ball.r)) {
+		      return console.log(true);
+		    } 
+		  }
+			
+		}
+		//two new ball objects
+		ball1 = new Ball(400,400,50,1,6);
+		ball2 =  new Ball(150,150,50,4,1);
+		//mouse event listener
+		canvas.addEventListener("click", function(event) { 
+			//offset used to get true x,y cordinates of the click event
+    	var clickX = event.clientX - canvas.offsetLeft;
+    	var clickY = event.clientY- canvas.offsetTop;
+    	ball1.x = clickX;
+    	ball1.y = clickY;  
+    });
+		// Add a Javascript event listener to the keypress event.
+		window.addEventListener("keypress", function(event) { 
+			// Just log the event to the console.
+			console.log(event);
+		});
+
+		//keypresses with jQuery
+		$(document.body).on('keydown', function(e) {
+			console.log(e.which);
+			switch (e.which) {
+				// key code for left arrow
+				case 37:
+				console.log('left arrow key pressed!');
+				ball1.xvel --;
+				break;
+				//keycode for up
+				case 38:
+				console.log('up key pressed');
+				ball1.yvel++;
+				break;
+				//key code for right
+				case 39:
+				console.log('right arrow key pressed!');
+				ball1.xvel++;
+				break;
+				//key code for down
+				case 40:
+				console.log('down arrow key pressed!');
+				ball1.yvel--;
+				break;
+				//key code for + key to increase spin
+				case 107:
+				console.log('down arrow key pressed!');
+				ball1.thetaInc +=.001;
+				break;
+				//key code for - key to decrease spin
+				case 109:
+				console.log('down arrow key pressed!');
+				ball1.thetaInc -=.001;
+				break;
+			}
+		});
+		// A function to repeat every time the animation loops.
+		function repeatme() {
+			//clear canvas for each frame of the animation.
+			ctx.clearRect(0,0,500,500);
+			// Draw the ball (stroked, not filled).
+			
+			ball1.intersect(ball2);
+			ball1.move();
+			ball2.move();
+			ball1.draw();
+			ball2.draw();
+			//put repeatme function into the animation frame and store it in animate
+			animate =  window.requestAnimationFrame(repeatme);	
+		}
+     // Get the animation going.
+		repeatme();
+    </script>
+
+  </body>
+
+</html>

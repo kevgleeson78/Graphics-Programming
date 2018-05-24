@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+
+    <style type="text/css">
+    canvas {
+      border: 1px solid black;
+    }
+      body {
+          background-color: white;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <canvas id="canvas-for-ball"></canvas>
+
+    <script type="text/javascript">
+      // Gets a handle to the element with id canvasOne.
+      var canvas = document.getElementById("canvas-for-ball");
+      // Get a 2D context for the canvas.
+      var ctx = canvas.getContext("2d");
+      canvas.width  = 500;
+		  canvas.height = 500;
+      // The vertical location of the ball.
+      //var y = 10;
+      var yvel = 3;
+      var xvel = 3 ;
+      //ball object
+      var ball = {
+        x: 90,
+        y: 150,
+        r: 50
+      };
+      // A function to repeat every time the animation loops.
+      function repeatme() {
+        //clear canvas for each frame of the animation.
+        ctx.clearRect(0,0,500,500);
+        // Draw the ball (stroked, not filled).
+        
+        //for loop to draw each line of th pie.
+        // i is set to 7. set i to whatever amount of sections you need. 
+        for (var i = 0; i < 7; i++) {
+          //starting point
+					ctx.beginPath();
+          //move to positions the pen to the center of the ball
+					ctx.moveTo(ball.x, ball.y);
+          //circle craeted with x,y and r set. The final two  arguments (Starting and ending point)
+          //change over each itteration of the loop giving a new point on the circle to draw to.
+					ctx.arc(ball.x, ball.y, ball.r, i*(2 * Math.PI / 7), (i+1)*(2 * Math.PI / 7));
+          //set line width  
+					//set colour of the lines
+          ctx.strokeStyle = '#444';
+          //render the lines
+          ctx.stroke();
+				}
+				ctx.beginPath();
+          //the inner circle of the pizza
+					ctx.moveTo(ball.x, ball.y);
+          //ball.r is used - 10 pixles to put the smaller circle in the pizza.
+					ctx.arc(ball.x,ball.y,ball.r-10,0,2*Math.PI);
+					ctx.lineWidth = 2;
+					ctx.strokeStyle = '#444';
+					ctx.stroke(); 
+          					
+		
+        // Update the y location.
+        ball.y += yvel;
+        ball.x += xvel;
+        //put repeatme function into the animation frame and store it in animate
+        animate =  window.requestAnimationFrame(repeatme);
+        //condition take into account the radius of the ball so 
+        //it bounces at the edge of the canvas instead 
+        //of going off of the screen to its center point.
+
+        if(ball.y >= canvas.height - ball.r){
+          //window.cancelAnimationFrame(animate);
+          yvel = yvel *-1;
+        }else if(ball.y <= ball.r){
+          yvel = yvel /-1;
+        }
+        if(ball.x  >= canvas.width- ball.r){
+          xvel = xvel *-1;
+        }else if(ball.x <=ball.r){
+          xvel = xvel / -1;
+        }
+      }
+    
+      // Get the animation going.
+      repeatme();
+      
+      
+    </script>
+
+  </body>
+
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <!-- Css for the circle -->
+        <style type="text/css">
+        
+        circle{
+            fill: yellow;
+        }
+        </style> 
+    </head> 
+    <body> 
+        <!--svg tags-->
+        <svg width="325" height="325" xmlns="http://www.w3.org/2000/svg">
+            <!-- A rectangle with x,y positions set to 10, width set to 100 and height set to 200px,
+                the colour is set to blue and the outline has a thickness of 3px with a colour of black.-->
+            <rect x = "10" y="10" width="100" height="200" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
+            <!--A circle with center x,y positions a radius, outline colour with stroke attribute, colour of red set with fill attribute
+            and the colour opacity set with fill-opacity -->
+            <circle id ="my-circle" cx="100" cy="100" r="20" stroke="black" stroke-width="3" fill="red" fill-opacity = 0.9 />
+            <!--This is how text can be set with x,y positioning the actuale text is in the enclosing tags -->
+            <text x="50" y="50" font-size = "24" fill="black">Kevin</text>
+            
+            <!-- To darw the pacman shape the following parameters have to be set.
+                 M=moveto centered at 230 x, 230 y.
+                 A = elliptical arc going clockwise and anti-clockwise both stopping
+                 at 275 degrees
+                 L= Draw a line from the center to 275 degrees and 230 degrees.
+                 Z = cloae the path of the line to the edge of the circle. 
+            -->
+            <!-- Stroke = set the outline of the shape to black.
+                 stroke-width = the thickness of the line.
+                 fill = The colour set to the shape.
+                 transform= rotating the shape so it faces the right direction.
+            -->
+            <path id="pacman" d="M230 230 A 45 45, 0, 1, 1, 275 275 L 275 230 Z" stroke="black" stroke-width="3" fill="yellow" 
+            transform="rotate(225 230 190)"/>
+        </svg>
+       
+      
+           
+        <script type="text/javascript"> 
+        //a function to move the circle centre to 120x,120y
+        function move(){ 
+        //var svg to store the element with an ID of 'my-circle'.
+        var svg = document.getElementById("my-circle");
+        //set the attribute cx to 120
+        svg.setAttribute("cx" ,"120");
+        //set the attribute cy to 120.
+        svg.setAttribute("cy" ,"120");
+        }
+        //a function to change the colour of the circle.
+        function colour(){ 
+        //var svg to store the element with an ID of 'my-circle'.
+        var svg = document.getElementById("my-circle");
+        //change the colour to green
+        svg.style.fill = "green";
+        }
+        //setTimeout to call the move function after 1 second.
+        setTimeout(move,1000);
+        //setTimeout to call the colour function after two seconds.
+        setTimeout(colour,2000);
+        </script> 
+    </body> 
+</html>

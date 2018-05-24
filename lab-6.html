@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<html>
+	<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+  	<head>
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+    <style type="text/css">
+		canvas {
+			border: 1px solid grey; 
+		}
+    </style>
+  	</head>
+	<body>
+
+    <canvas id="transform"></canvas>
+
+    <script type="text/javascript">
+		// Gets a handle to the element with id canvasOne.
+		var canvas = document.getElementById("transform");
+		// Get a 2D context for the canvas.
+		var ctx = canvas.getContext("2d");
+        //initialize canvas height and width
+		function init(){
+            canvas.width = 470;
+            canvas.height = 470;	
+        }
+		//call init function
+        init();
+		//nosteps var to hold the amount of frames completed
+        var nosteps = 0;
+		//oneCycle var for conditional to keep track of one complete cycle of the canvas
+		var oneCycle = 1600;
+		// selectEye var for measuring the distance of the first top section of the canvas.
+		var selectEye = 400; 
+		//The starting position of pacman
+		ctx.translate(35,35);
+		class pacman {
+            draw(){
+				ctx.beginPath();
+		        //set the arc to start at different point rather than a full circle
+		        //this creat the opening for pacmans mouth.
+		        ctx.arc(0, 0, 30, Math.PI / 4, (7 * Math.PI)/4);				
+		        //move the pen to the center of the circle
+		        ctx.moveTo(0,0);
+		        //draw a lint out to the edge of the upper opening
+		        ctx.lineTo(0 + 30 * Math.cos(Math.PI /4),(0 + 30 * Math.sin(Math.PI /4)));
+		        //move the pen back to thte center of the circle.
+		        ctx.moveTo(0,0);
+		        //draw a line out to the lower portion of the mouth
+		        ctx.lineTo(0 + 30 * Math.cos(7*Math.PI / 4),(0 + 30 * Math.sin(7*Math.PI / 4)));	
+		        //set the line width
+		        ctx.lineWidth = 2;
+		        //set the colour to black
+		        ctx.strokeStyle = "rgb(0,0,0)"
+		        //render the image
+		        ctx.stroke();
+				//reset nosteps if it goes over on cycle of the animation (1600)	
+				if (nosteps>oneCycle){
+					//subtract 1600 from the current nosteps
+					//to bring it back to 1.
+					nosteps-=oneCycle;
+				}
+				//draw the eye for the top portion of the canvas only
+				if(nosteps <= selectEye && nosteps >=1){ 
+					ctx.beginPath();
+					//set y to -15 as the arc is inverted
+					ctx.arc(0,-15,5,0,2*Math.PI);
+					ctx.fillStyle = "rgba(0, 0, 0)";
+					ctx.fill();
+					ctx.lineWidth = 2;
+					ctx.strokeStyle = "rgb(0,0,0)"
+					ctx.stroke();		
+				}else{
+					//draw the eye for the other three sides of the canvas
+					ctx.beginPath();
+					//set y to 15 as the arc is rotated the way we need it.
+					ctx.arc(0,15,5,0,2*Math.PI);
+					ctx.fillStyle = "rgba(0, 0, 0)";
+					ctx.fill();
+					ctx.lineWidth = 2;
+					ctx.strokeStyle = "rgb(0,0,0)"
+					ctx.stroke();	
+				}
+				
+			}
+        }
+   
+    function clear(){ 
+        ctx.save(); 
+        ctx.setTransform(1, 0, 0, 1, 0, 0); 
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+		
+		ctx.beginPath();
+		//draw second rectangle 
+		ctx.rect(65, 65, canvas.width-130, canvas.height-130);
+		
+		//set to white
+		ctx.fillStyle = "rgb(255,255,255)";
+		//fill the rectangle with colour
+		ctx.fill();
+		//set line width of the rectangle
+    	ctx.lineWidth = 1;
+		//set the colour of the rectangles line
+    	ctx.strokeStyle = 'black';
+		//render the image
+    	ctx.stroke();
+		/*conditional to display the text "rotate" for two seconds.
+		*This will happen after every 400 steps in the animation for 80 steps 
+		*as the animation runs at 40 fps.
+		*/
+		if(nosteps>=400&&nosteps<=480||nosteps>=800&&nosteps<=880||nosteps>=1200&&nosteps<=1280||nosteps>=0&&nosteps<=80){ 
+		//select font style
+		ctx.font = "30px Arial";
+		//scale the text up for every frame in the animation
+		ctx.transform(nosteps*.00275,0,0,nosteps*.00275,canvas.width/2,canvas.height/2);
+		//set the text to be displayed set x position to -50 to keep the text on screen
+		ctx.strokeText("ROTATE",-50,0); 
+		}
+		//restore the canvas.
+		ctx.restore();
+	}
+	//new instance of pacman
+    test = new pacman();
+	
+        
+    // A function to repeat every time the animation loops.
+	function repeatme() {
+		//increment nosteps by for every frame of the animation
+		nosteps++;
+		//removed ctx.translate(1,0); for next step in lab with transform
+		ctx.transform(1,0,0,1,1,0);
+		if(nosteps%400 == 0){
+			//removed ctx.rotate(Math.PI/2); for next step in lab with transform
+			ctx.transform(0,1,-1,0,1,1);
+		}
+		//clear canvas for each redraw at each frame
+		clear();
+		//call draw function
+    	test.draw();
+       	animate =  window.requestAnimationFrame(repeatme);	
+	}
+     // Get the animation going.
+	repeatme();
+   
+    </script>
+
+  </body>
+
+</html>

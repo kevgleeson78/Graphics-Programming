@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html>
+
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+  <head>
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+
+    <style type="text/css">
+		canvas {
+			border: 1px solid grey; 
+		}
+    </style>
+
+  </head>
+
+  <body>
+
+    <canvas id="canvas-for-ball"></canvas>
+
+    <script type="text/javascript">
+		// Gets a handle to the element with id canvasOne.
+		var canvas = document.getElementById("canvas-for-ball");
+		// Get a 2D context for the canvas.
+		var ctx = canvas.getContext("2d");
+		//function to initialize the canvas
+		function init(){
+			//set height and width of canvas
+            canvas.width = 600;
+            canvas.height = 600;
+        }
+        init();
+        //Counter variable 
+		var count = 0;
+        //ball object
+		
+		class Ball {
+			constructor(x,y,r,xvel,yvel,mass){
+				this.x =x;
+				this.y = y;
+				this.r =r;
+				this.xvel = xvel;
+				this.yvel = yvel;
+                this.mass = mass;
+				//angle defining spin and sections of ball
+				this.theta = 0;
+				//for the sections of the ball
+				this.theta2 = 0;
+				//for he amount of sections needed
+				this.seventh = (Math.PI*2)/7
+				//to control the amount of spin the ball has
+				this.thetaInc = 0.0129;
+				//For gravity
+				this.gravity = .02;
+				this.friction = .01;
+			}
+			drop(){
+				//Gravity
+				this.yvel += this.gravity*1.9;
+				//friction
+				this.xvel = this.xvel - (this.xvel*this.friction);
+			}
+            draw(){
+				//text to hold the score of the game
+				ctx.font = "30px Comic Sans MS";
+				ctx.fillStyle = "red";
+				ctx.textAlign = "center";
+				//the counter is displayed as the score 1 point for each frame rate of the annimation.
+				ctx.fillText("Score "+count, 80, 30); 
+				// Update the y location.
+				this.x += this.xvel;
+				this.y += this.yvel;
+				
+
+				//draw circle
+				ctx.beginPath();
+				ctx.arc(this.x,this.y,this.r,0,Math.PI*2,false);
+				ctx.stroke();
+				//fill the circle
+				ctx.fillStyle = this.color ;
+				ctx.fill();
+				//draw inner circle of ball
+				ctx.beginPath();
+				ctx.arc(this.x,this.y,this.r*.9,0,Math.PI*2,false);
+				ctx.stroke();
+				//spin control
+				this.theta += this.thetaInc;
+				//loop for adding sections to pie
+				for( var n = 0; n < 7; ++n) {  // add loop to draw radii
+					this.theta2 = this.theta + n * this.seventh;
+					ctx.moveTo( this.x, this.y);
+					ctx.lineTo( this.x + this.r*Math.cos(this.theta2), this.y + this.r*Math.sin(this.theta2));
+					}
+				ctx.lineWidth = "2";
+				ctx.lineCap = "round";
+				ctx.strokeStyle = "black";
+				ctx.stroke();			
+			}
+			
+            move(){	
+				//collision off each wall apart from the bottom wall
+				//The paddle will now only have the abillity to collide with the ball.
+				//Paddle code adapted from https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript/Game_over
+				if(this.y + this.yvel < this.r) {
+					this.yvel = -this.yvel;
+					//codition to check if the ball has hit the bottom wall
+				} else if(this.y + this.yvel > canvas.height-this.r) {
+					//condition to check if the ball ha hit the paddle
+					if(this.x > paddleX && this.x < paddleX + paddleWidth) {
+						//if it has hit the paddle the ball will move upwards
+						this.yvel = -this.yvel;
+					}
+					else {
+						//if the ball has hit the bottom wall (missed by the paddle)
+						//a game over message is displayed with the final score
+						alert("GAME OVER YOUR SCORE IS  " +count);
+						//reload the game when the ok button is pressed by the user.
+						document.location.reload();
+					}
+				}
+				//to reverse the direction of the ball when hitting walls
+				if((this.xvel<0 && this.yvel >0) && this.thetaInc <0){
+					this.thetaInc = -1*this.thetaInc;
+				}
+				else if((this.xvel <0 && this.yvel>0) && this.thetaInc >0){
+					this.thetaInc = -1*this.thetaInc
+				}
+				else if((this.xvel >0 && this.yvel >0) && this.thetaInc >0){
+					this.thetaInc = -1 * this.thetaInc;
+				}
+				else if((this.xvel > 0 && this.yvel < 0)&& this.thetaInc <0){
+					this.thetaInc = -1 * this.thetaInc;
+				}
+			
+				if(this.x>=canvas.width-this.r){
+					this.x = canvas.width - this.r;
+					this.xvel = -this.xvel;
+				}else if(this.x<=this.r){
+					this.x = this.r;
+					this.xvel = -this.xvel;
+				   }
+			}
+			//resize function
+			resize(){
+				//this. would not work here fro some reason
+				//i had to assing this to a variable called that for it to work
+    			var that = this;
+				//var to check if the ball is getting bigger
+    			that.up = true;
+				//initial size of the radius
+    			that.r = 20;
+				//go up i size by 1 px for each frame of animation
+    			that.increment = 1;
+				//the max size the ball is allowed
+    			that.ceiling = 50;
+				//function to check the size of the ball
+    			function PerformCalc() {
+					//if the ball is increasing in size and teh radius is less the the max of 50px
+    				if (that.up == true && that.r <= that.ceiling) {
+						//increase the size of the radius
+    					that.r += that.increment
+						//if the radius is the size of the max allowed 50px
+    					if (that.r == that.ceiling) {
+							//set up to false
+    						that.up = false;
+    					}
+    				}else{
+
+    					that.up = false
+						//decrease the size of the radius
+    					that.r -= that.increment;
+						//go back up in size again if the radius has reached 20px
+    					if (that.r == 20) {
+    						that.up = true;
+    					}
+    				  }
+    			}
+				//set to change every 50 frames of the animation
+    			setInterval(PerformCalc, 50);	  
+      		}
+				 //function to change the colour of the balls
+			setColour(){
+				//three variable o is to round up or down the random amount;
+				//rd is to hold a random value
+				//s is to set the bounds of the random number to 0 -255 for each rgb value
+    			 this.o = Math.round, this.rd = Math.random, this.s = 255;
+				 //color variable to hold the random rgb value
+				 this.color =  'rgb(' + this.o(this.rd()*this.s) + ',' + this.o(this.rd()*this.s) + ',' + this.o(this.rd()*this.s) +')';	
+				 
+			}
+			
+        }
+		//Paddle variables width and height
+		var paddleHeight = 7;
+		var paddleWidth = 100;
+		//start in the middle of the canvas.
+		var paddleX = (canvas.width-paddleWidth)/2;
+		//draw paddle function
+		function drawPaddle() {
+			//begin the drawing of the rectangle
+			ctx.beginPath();
+			//position and dimensions of the rectangle
+			ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
+			//set color
+			ctx.fillStyle = "Black";
+			ctx.fill();
+			ctx.closePath();
+		}
+		//Intersect function takes a ball as a perameter
+		//ball will be the the object used to test if the two are touching.
+		
+		function intersect(ball,ball1) {
+		//the x and y cordinates of the first ball are subtracted from the test ball and stored
+		//in productX and productY
+		dx = ball1.x - ball.x;
+		dy = ball1.y - ball.y;
+		//pythagoras theorem is used to get the distance between both center points of each circle.
+		distance = Math.sqrt(dx * dx + dy * dy);
+		//A condition is used to check if the distance between both bencer point of each circle
+		//is less than or equal to the sum of both radii the circles are touching.
+		//the result is p[rinted out to the console
+		if (distance < ball1.r + ball.r) { 
+        	collision_angle = Math.atan2(dy,dx);
+          	magnitude_1 = Math.sqrt(ball.xvel*ball.xvel+ball.yvel*ball.yvel);
+          	magnitude_2 = Math.sqrt(ball1.xvel*ball1.xvel+ball1.yvel*ball1.yvel);
+          	direction_1 = Math.atan2(ball.yvel, ball.xvel);
+          	direction_2 = Math.atan2(ball1.yvel, ball1.xvel);
+          	new_xvel_1 = magnitude_1 * Math.cos(direction_1-collision_angle);
+          	new_yvel_1 = magnitude_1 * Math.sin(direction_1-collision_angle);
+          	new_xvel_2 = magnitude_2 * Math.cos(direction_2-collision_angle);
+          	new_yvel_2 = magnitude_1 * Math.sin(direction_2-collision_angle);
+            
+			final_xvel_1 = ((ball.mass-ball1.mass)*new_xvel_1+(ball1.mass+ball1.mass)*new_xvel_2)/(ball.mass+ball1.mass);
+            final_xvel_2 = ((ball.mass+ball.mass)*new_xvel_1+(ball1.mass-ball.mass)*new_xvel_2)/(ball.mass+ball1.mass);
+            
+			final_yvel_1 = new_yvel_1;
+            final_yvel_2 = new_yvel_2;
+
+            ball.xvel = Math.cos(collision_angle)*final_xvel_1+Math.cos(collision_angle+Math.PI/2)*final_yvel_1;
+            ball.yvel = Math.sin(collision_angle)*final_xvel_1+Math.sin(collision_angle+Math.PI/2)*final_yvel_1;
+            ball1.xvel = Math.cos(collision_angle)*final_xvel_2+Math.cos(collision_angle+Math.PI/2)*final_yvel_2;
+            ball1.yvel = Math.sin(collision_angle)*final_xvel_2+Math.sin(collision_angle+Math.PI/2)*final_yvel_2;  
+            } 
+		}
+    	
+		// Add a Javascript event listener to the keypress event.
+		window.addEventListener("keypress", function(event) { 
+			// Just log the event to the console.
+			console.log(event);
+		});
+
+		//keypresses with jQuery
+		$(document.body).on('keydown', function(e) {
+			console.log(e.which);
+			switch (e.which) {
+				// key code for left arrow
+				case 39:
+				//stop the paddle from going off of the screen
+				if(39 && paddleX < canvas.width-paddleWidth) {
+				paddleX += 7;
+			}
+				break;	
+				//key code for right
+				case 37:
+				//stop the paddle from going off of the screen
+				if(37 && paddleX > 0) {
+    				paddleX -= 7;
+				}
+				break;
+			}
+		});
+	//three new ball objects for the game one introduced every 1000 frames.
+	b1 = new Ball(200,200,40,.5,.5,5);
+    b2 = new Ball(195,150,40,3,3,5);
+	b3 = new Ball(120,150,30,1,2,7);
+//	b1.resize();
+	b2.resize();
+    // A function to repeat every time the animation loops.
+	function repeatme() {
+		count++;
+		
+		//clear canvas for each frame of the animation.
+		ctx.clearRect(0,0,600,600);
+		//introduce a new ball after a score of 1000
+		if (count >=1000){ 
+			// Draw the ball (stroked, not filled).
+		b1.draw();
+		b1.move();
+		//intersect function
+		intersect(b1,b2);
+		//change colour
+		b1.setColour();
+		
+		}
+		//introduce another ball after 2000 frames
+		if (count >=2000){ 
+			// Draw the ball (stroked, not filled).
+		b3.draw();
+		b3.move();
+		//intersect function
+		intersect(b1,b3);
+		//change colour
+		b3.setColour();
+		}
+        b2.draw();
+       
+		
+		
+        b2.move();
+		b2.setColour();
+     
+		drawPaddle();
+		//put repeatme function into the animation frame and store it in animate
+		animate =  window.requestAnimationFrame(repeatme);	
+	}
+     // Get the animation going.
+	repeatme();
+   
+    </script>
+
+  </body>
+
+</html>
